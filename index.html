@@ -456,14 +456,24 @@ nav {
 
 .float-badge.top {
   top: 60px;
-  right: -40px;
+  left: -30px;
   animation: floatY 4s ease-in-out infinite;
 }
 
 .float-badge.bottom {
   bottom: 100px;
-  left: -50px;
+  right: -40px;
   animation: floatY 4s ease-in-out infinite 2s;
+}
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.phone-frame-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
 .float-badge .dot {
@@ -1063,6 +1073,7 @@ footer {
       </div>
 
       <div class="hero-visual">
+        <div class="phone-frame-wrapper">
         <div class="float-badge top"><span class="dot"></span>Live · KYC verified</div>
         <div class="phone-frame">
           <div class="phone-screen">
@@ -1086,6 +1097,7 @@ footer {
           </div>
         </div>
         <div class="float-badge bottom">USDT · TRC-20</div>
+        </div>
       </div>
     </div>
   </div>
