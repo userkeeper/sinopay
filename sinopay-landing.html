@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SinoPay — Cashless Wallet Infrastructure for Land-Based Casinos</title>
+<meta name="description" content="White-labelled cashless wallet platform built for land-based casino operators. Native mobile apps, crypto rails, AML tooling.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --bg-elevated: #131313;
+  --bg-card: #161616;
+  --ink: #f4f0e8;
+  --ink-muted: #8a8580;
+  --ink-dim: #565250;
+  --gold: #c8a857;
+  --gold-bright: #e6c574;
+  --gold-deep: #8a7138;
+  --line: #232220;
+  --line-bright: #2e2c28;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter Tight', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============ NAV ============ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 24px 0;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.logo .accent { color: var(--gold); font-style: italic; }
+
+.logo-mark {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  margin-right: 14px;
+  position: relative;
+  align-self: center;
+  box-shadow: 0 0 12px var(--gold);
+}
+
+.nav-links {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--ink); }
+
+.nav-cta {
+  padding: 10px 22px;
+  border: 1px solid var(--gold-deep);
+  color: var(--gold-bright) !important;
+  font-weight: 500 !important;
+  transition: all 0.3s;
+}
+
+.nav-cta:hover {
+  background: var(--gold);
+  color: var(--bg) !important;
+}
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 140px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  right: -300px;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(200, 168, 87, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: center;
+  position: relative;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.1s forwards;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 30px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+
+.hero h1 .italic {
+  font-style: italic;
+  color: var(--gold-bright);
+  font-weight: 300;
+}
+
+.hero h1 .underline {
+  position: relative;
+  display: inline-block;
+}
+
+.hero h1 .underline::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.4;
+}
+
+.hero-sub {
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  max-width: 540px;
+  margin-bottom: 48px;
+  font-weight: 300;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.6s forwards;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--bg);
+  padding: 16px 32px;
+  border: none;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  background: var(--gold-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(200, 168, 87, 0.25);
+}
+
+.btn-secondary {
+  color: var(--ink);
+  text-decoration: none;
+  padding: 16px 24px;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s;
+}
+
+.btn-secondary:hover { color: var(--gold-bright); }
+
+.arrow { transition: transform 0.3s; }
+.btn-primary:hover .arrow,
+.btn-secondary:hover .arrow { transform: translateX(4px); }
+
+/* Hero visual: phone mockup */
+.hero-visual {
+  position: relative;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.5s forwards;
+}
+
+.phone-frame {
+  width: 320px;
+  height: 640px;
+  background: linear-gradient(145deg, #1c1c1c, #0d0d0d);
+  border-radius: 44px;
+  padding: 14px;
+  margin: 0 auto;
+  box-shadow:
+    0 50px 100px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(200, 168, 87, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  position: relative;
+}
+
+.phone-frame::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 22px;
+  background: #000;
+  border-radius: 14px;
+  z-index: 3;
+}
+
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a1410 100%);
+  border-radius: 32px;
+  padding: 60px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.phone-screen::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(200, 168, 87, 0.15) 0%, transparent 70%);
+}
+
+.app-greeting {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-dim);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.app-name {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 32px;
+}
+
+.balance-card {
+  background: linear-gradient(135deg, rgba(200, 168, 87, 0.12), rgba(200, 168, 87, 0.03));
+  border: 1px solid rgba(200, 168, 87, 0.2);
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.balance-card::after {
+  content: '◆';
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  color: var(--gold);
+  font-size: 14px;
+}
+
+.balance-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.balance-amount {
+  font-family: var(--serif);
+  font-size: 34px;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.balance-amount .currency {
+  color: var(--gold);
+  font-style: italic;
+  font-size: 22px;
+  margin-right: 4px;
+}
+
+.app-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.app-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.app-btn.primary {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+}
+
+.transactions {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.tx {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+}
+
+.tx-label { color: var(--ink-muted); }
+.tx-amount { color: var(--ink); }
+.tx-amount.positive { color: #7fb878; }
+
+/* Floating badge near phone */
+.float-badge {
+  position: absolute;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line-bright);
+  border-radius: 100px;
+  padding: 10px 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.float-badge.top {
+  top: 60px;
+  right: -40px;
+  animation: floatY 4s ease-in-out infinite;
+}
+
+.float-badge.bottom {
+  bottom: 100px;
+  left: -50px;
+  animation: floatY 4s ease-in-out infinite 2s;
+}
+
+.float-badge .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #7fb878;
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 0 8px #7fb878;
+}
+
+/* ============ MARQUEE BAND ============ */
+.marquee-band {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 28px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  z-index: 2;
+}
+
+.marquee {
+  display: inline-flex;
+  animation: marquee 40s linear infinite;
+  gap: 60px;
+  padding-right: 60px;
+}
+
+.marquee-item {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--ink-dim);
+  font-style: italic;
+  display: inline-flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.marquee-item::after {
+  content: '✦';
+  color: var(--gold);
+  font-size: 12px;
+  font-style: normal;
+}
+
+/* ============ SECTION ============ */
+section {
+  padding: 140px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.section-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(36px, 4.5vw, 60px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+  max-width: 800px;
+}
+
+.section-title .italic {
+  font-style: italic;
+  color: var(--gold-bright);
+}
+
+.section-intro {
+  font-size: 18px;
+  color: var(--ink-muted);
+  max-width: 620px;
+  margin-bottom: 72px;
+  line-height: 1.6;
+}
+
+/* ============ PROBLEM SECTION ============ */
+.problem {
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 60px;
+  margin-top: 80px;
+}
+
+.problem-item {
+  position: relative;
+  padding-left: 0;
+}
+
+.problem-num {
+  font-family: var(--serif);
+  font-size: 56px;
+  color: var(--gold);
+  font-style: italic;
+  line-height: 1;
+  margin-bottom: 24px;
+  font-weight: 300;
+}
+
+.problem-item h3 {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.problem-item p {
+  color: var(--ink-muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ============ MODULES SECTION ============ */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  margin-top: 80px;
+  border: 1px solid var(--line);
+}
+
+.module {
+  background: var(--bg);
+  padding: 56px 48px;
+  position: relative;
+  transition: background 0.4s;
+}
+
+.module:hover { background: var(--bg-elevated); }
+
+.module-icon {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--gold-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.module-icon::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 1px solid var(--line-bright);
+  pointer-events: none;
+}
+
+.module-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--gold);
+}
+
+.module-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.module h3 {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+
+.module h3 .italic { font-style: italic; color: var(--gold-bright); }
+
+.module p {
+  color: var(--ink-muted);
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.module-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.module-features li {
+  font-size: 13px;
+  color: var(--ink);
+  padding-left: 20px;
+  position: relative;
+  font-weight: 300;
+}
+
+.module-features li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 8px;
+  height: 1px;
+  background: var(--gold);
+}
+
+/* ============ FLOW DIAGRAM SECTION ============ */
+.flow {
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--line);
+}
+
+.flow-diagram {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 32px;
+  align-items: center;
+  margin-top: 80px;
+}
+
+.flow-step {
+  text-align: center;
+}
+
+.flow-circle {
+  width: 140px;
+  height: 140px;
+  border: 1px solid var(--gold-deep);
+  border-radius: 50%;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: var(--bg);
+}
+
+.flow-circle::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+
+.flow-circle .num {
+  font-family: var(--serif);
+  font-size: 48px;
+  font-style: italic;
+  color: var(--gold);
+  font-weight: 300;
+}
+
+.flow-step h4 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.flow-step p {
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.flow-arrow {
+  font-family: var(--serif);
+  font-size: 32px;
+  color: var(--gold);
+  font-style: italic;
+  align-self: flex-start;
+  margin-top: 55px;
+}
+
+/* ============ STATS BAND ============ */
+.stats {
+  padding: 100px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 48px;
+}
+
+.stat {
+  text-align: left;
+}
+
+.stat-num {
+  font-family: var(--serif);
+  font-size: 64px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.stat-num .accent { color: var(--gold-bright); font-style: italic; }
+.stat-num .unit { font-size: 32px; color: var(--ink-muted); }
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ============ COMPLIANCE / TECH ============ */
+.compliance {
+  background: var(--bg-elevated);
+}
+
+.compliance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.compliance-list {
+  list-style: none;
+}
+
+.compliance-list li {
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.compliance-list li:last-child { border-bottom: 1px solid var(--line); }
+
+.compliance-list .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding-top: 4px;
+}
+
+.compliance-list .desc h4 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.compliance-list .desc p {
+  font-size: 14px;
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+/* ============ CTA ============ */
+.cta {
+  padding: 160px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(200, 168, 87, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.cta-quote {
+  font-family: var(--serif);
+  font-size: clamp(36px, 4vw, 56px);
+  font-style: italic;
+  line-height: 1.15;
+  font-weight: 300;
+  max-width: 900px;
+  margin: 0 auto 48px;
+  color: var(--ink);
+}
+
+.cta-quote .gold { color: var(--gold-bright); }
+
+.cta-sub {
+  color: var(--ink-muted);
+  font-size: 17px;
+  margin-bottom: 48px;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-form {
+  display: flex;
+  gap: 12px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.cta-form input {
+  flex: 1;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line-bright);
+  padding: 16px 20px;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cta-form input:focus { border-color: var(--gold-deep); }
+.cta-form input::placeholder { color: var(--ink-dim); }
+
+.cta-form button {
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 16px 28px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cta-form button:hover { background: var(--gold-bright); }
+
+/* ============ FOOTER ============ */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 60px 0 40px;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 60px;
+}
+
+.footer-brand p {
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 16px;
+  max-width: 360px;
+}
+
+.footer-col h5 {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.footer-col a {
+  display: block;
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 0;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover { color: var(--ink); }
+
+.footer-bottom {
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.1em;
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 968px) {
+  .container { padding: 0 24px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 60px; }
+  .hero-visual { display: flex; justify-content: center; }
+  .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+  .modules-grid { grid-template-columns: 1fr; }
+  .flow-diagram { grid-template-columns: 1fr; }
+  .flow-arrow { transform: rotate(90deg); margin: 0 auto; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .compliance-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+  .nav-links { gap: 24px; }
+  .nav-links a:not(.nav-cta) { display: none; }
+  section { padding: 80px 0; }
+  .module { padding: 40px 28px; }
+  .float-badge.top { right: 0; }
+  .float-badge.bottom { left: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container nav-inner">
+    <div class="logo"><span class="logo-mark"></span>Sino<span class="accent">Pay</span></div>
+    <div class="nav-links">
+      <a href="#platform">Platform</a>
+      <a href="#how">How it works</a>
+      <a href="#compliance">Compliance</a>
+      <a href="#contact" class="nav-cta">Request demo</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-eyebrow">Cashless Infrastructure · Land-based casinos</div>
+        <h1>
+          The <span class="italic">cashless</span> layer<br>
+          for the modern<br>
+          <span class="underline">casino floor</span>.
+        </h1>
+        <p class="hero-sub">
+          A custom-branded mobile wallet for your guests. Deposits in card, cash or crypto. Withdrawals on demand. AML tooling built in. Deployed under your name, integrated with your existing player tracking — without replacing it.
+        </p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn-primary">
+            Request a demo
+            <span class="arrow">→</span>
+          </a>
+          <a href="#platform" class="btn-secondary">
+            See the platform
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="float-badge top"><span class="dot"></span>Live · KYC verified</div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="app-greeting">Welcome back</div>
+            <div class="app-name">Mr. Aliyev</div>
+
+            <div class="balance-card">
+              <div class="balance-label">Available balance</div>
+              <div class="balance-amount"><span class="currency">$</span>4,820.<small style="font-size:20px">00</small></div>
+            </div>
+
+            <div class="app-actions">
+              <div class="app-btn primary">Deposit</div>
+              <div class="app-btn">Withdraw</div>
+            </div>
+
+            <div class="transactions">Recent activity</div>
+            <div class="tx"><span class="tx-label">Cage · Deposit</span><span class="tx-amount positive">+$2,000</span></div>
+            <div class="tx"><span class="tx-label">Table 4 · Buy-in</span><span class="tx-amount">−$500</span></div>
+            <div class="tx"><span class="tx-label">USDT · Deposit</span><span class="tx-amount positive">+$1,500</span></div>
+          </div>
+        </div>
+        <div class="float-badge bottom">USDT · TRC-20</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-band">
+  <div class="marquee">
+    <span class="marquee-item">White-labelled under your brand</span>
+    <span class="marquee-item">Native iOS &amp; Android</span>
+    <span class="marquee-item">USDT TRC-20 rails</span>
+    <span class="marquee-item">Integrated AML monitoring</span>
+    <span class="marquee-item">Multi-cashier reconciliation</span>
+    <span class="marquee-item">Plugs into existing CMS</span>
+    <span class="marquee-item">White-labelled under your brand</span>
+    <span class="marquee-item">Native iOS &amp; Android</span>
+    <span class="marquee-item">USDT TRC-20 rails</span>
+    <span class="marquee-item">Integrated AML monitoring</span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <div class="section-eyebrow">Why now</div>
+    <h2 class="section-title">
+      Global casino management systems <span class="italic">weren't built</span> for operators like you.
+    </h2>
+    <p class="section-intro">
+      IGT and Konami sell platforms designed for Las Vegas. Six-figure deployments. Multi-year contracts. Modules you'll never use. We saw a gap — and built for it.
+    </p>
+
+    <div class="problem-grid">
+      <div class="problem-item">
+        <div class="problem-num">01</div>
+        <h3>Cash still slows everything down.</h3>
+        <p>Counting, reconciling, refilling, escorting. Your cage handles the same volume your cashiers did a decade ago — manually. International guests with banking friction make it worse.</p>
+      </div>
+      <div class="problem-item">
+        <div class="problem-num">02</div>
+        <h3>Your guests already live in apps.</h3>
+        <p>Turkish, MENA, CIS visitors expect a mobile experience. They pay rent in apps, hail taxis in apps, transfer money in apps. They walk into your floor and find a 1990s workflow.</p>
+      </div>
+      <div class="problem-item">
+        <div class="problem-num">03</div>
+        <h3>Enterprise CMS is overkill.</h3>
+        <p>You don't need 200 modules, US-centric compliance, and a $500K implementation. You need a mobile-first cashless layer that fits the regional reality and works alongside what you already have.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="platform">
+  <div class="container">
+    <div class="section-eyebrow">The platform</div>
+    <h2 class="section-title">
+      Three applications. <span class="italic">One ledger.</span>
+    </h2>
+    <p class="section-intro">
+      Every SinoPay deployment ships as a complete, white-labelled stack — branded for your property, hosted in compliance-friendly infrastructure, integrated where it needs to be.
+    </p>
+
+    <div class="modules-grid">
+      <div class="module">
+        <div class="module-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="6" y="2" width="12" height="20" rx="2"/>
+            <line x1="12" y1="18" x2="12" y2="18"/>
+          </svg>
+        </div>
+        <div class="module-tag">Module 01 · Guest</div>
+        <h3>Native <span class="italic">guest app</span></h3>
+        <p>iOS and Android, built natively. KYC onboarding, deposits in card / cash / USDT, real-time balance, push notifications, responsible-gambling self-limits, loyalty integration.</p>
+        <ul class="module-features">
+          <li>Apple Pay &amp; Google Pay supported</li>
+          <li>USDT TRC-20 deposits &amp; withdrawals</li>
+          <li>Biometric authentication</li>
+          <li>Multi-language: EN, RU, KA, TR</li>
+        </ul>
+      </div>
+
+      <div class="module">
+        <div class="module-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="14" rx="2"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+          </svg>
+        </div>
+        <div class="module-tag">Module 02 · Floor</div>
+        <h3>Cashier <span class="italic">tablet</span></h3>
+        <p>iPad-first interface for your cage and floor staff. QR-based transactions, shift reconciliation, multi-role permissions, instant audit trail per cashier per shift.</p>
+        <ul class="module-features">
+          <li>Single-tap deposit &amp; withdrawal</li>
+          <li>PIN + biometric staff login</li>
+          <li>Cashier / supervisor / manager roles</li>
+          <li>End-of-shift cash reconciliation</li>
+        </ul>
+      </div>
+
+      <div class="module">
+        <div class="module-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="3" x2="3" y2="21"/>
+            <line x1="3" y1="21" x2="21" y2="21"/>
+            <polyline points="7,15 12,10 16,14 21,9"/>
+          </svg>
+        </div>
+        <div class="module-tag">Module 03 · Operations</div>
+        <h3>Operator <span class="italic">dashboard</span></h3>
+        <p>Real-time view of every balance, every transaction, every alert. Built for general managers, finance, and compliance teams to monitor and report without spreadsheet acrobatics.</p>
+        <ul class="module-features">
+          <li>Real-time floor balance &amp; flow</li>
+          <li>AML pattern detection &amp; alerts</li>
+          <li>Regulator-ready export reports</li>
+          <li>Per-shift, per-cashier analytics</li>
+        </ul>
+      </div>
+
+      <div class="module">
+        <div class="module-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/>
+          </svg>
+        </div>
+        <div class="module-tag">Module 04 · Trust</div>
+        <h3>Compliance <span class="italic">layer</span></h3>
+        <p>Built-in KYC, transaction monitoring, suspicious-activity flagging, and exportable reports. You stay in control as the licensed operator. We provide the tooling.</p>
+        <ul class="module-features">
+          <li>Third-party KYC via Sumsub or Veriff</li>
+          <li>Configurable AML thresholds</li>
+          <li>7-year encrypted record retention</li>
+          <li>Audit-trail every transaction</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOW -->
+<section class="flow" id="how">
+  <div class="container">
+    <div class="section-eyebrow">How it works</div>
+    <h2 class="section-title">From <span class="italic">deposit</span> to table — in under a minute.</h2>
+    <p class="section-intro">A guest's first session on SinoPay, end to end. After onboarding, every subsequent visit takes seconds.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="flow-circle"><span class="num">i</span></div>
+        <h4>Guest opens the app</h4>
+        <p>Branded under your name. KYC once, on first install. Apple Pay, card, or USDT to fund the wallet.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-circle"><span class="num">ii</span></div>
+        <h4>QR at the cage or table</h4>
+        <p>Cashier scans, confirms amount, issues chips or slot credit. Two-second operation. No paperwork.</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-circle"><span class="num">iii</span></div>
+        <h4>You see everything</h4>
+        <p>Real-time dashboard for your team. Auditable trail, AML alerts, end-of-shift reconciliation — automatic.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-num"><span class="accent">~70</span><span class="unit">%</span></div>
+        <div class="stat-label">Less cash handling on floor</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="accent">4</span><span class="unit">mo</span></div>
+        <div class="stat-label">Deployment timeline</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="accent">24</span><span class="unit">/7</span></div>
+        <div class="stat-label">Engineering &amp; ops support</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="accent">100</span><span class="unit">%</span></div>
+        <div class="stat-label">Your brand, your data</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section class="compliance" id="compliance">
+  <div class="container">
+    <div class="compliance-grid">
+      <div>
+        <div class="section-eyebrow">Compliance</div>
+        <h2 class="section-title">Built so <span class="italic">your licence</span> stays clean.</h2>
+        <p class="section-intro">
+          SinoPay is software. You remain the licensed operator. Funds are custodied within your existing operational structure, not ours — meaning regulatory responsibility stays where it belongs, and where you're already authorised.
+        </p>
+      </div>
+
+      <ul class="compliance-list">
+        <li>
+          <span class="label">KYC</span>
+          <div class="desc">
+            <h4>Identity verification</h4>
+            <p>Third-party providers (Sumsub, Veriff) for tier-1 compliance. Configurable thresholds for enhanced due diligence on high-volume guests.</p>
+          </div>
+        </li>
+        <li>
+          <span class="label">AML</span>
+          <div class="desc">
+            <h4>Transaction monitoring</h4>
+            <p>Pattern detection for structuring, rapid in-out, and unusual velocity. Automated flagging for your compliance officer to review.</p>
+          </div>
+        </li>
+        <li>
+          <span class="label">Data</span>
+          <div class="desc">
+            <h4>Encrypted retention</h4>
+            <p>AES-256 at rest, TLS 1.3 in transit. 7-year audit-grade record retention, exportable on demand for any regulatory request.</p>
+          </div>
+        </li>
+        <li>
+          <span class="label">Custody</span>
+          <div class="desc">
+            <h4>Operator-held funds</h4>
+            <p>Guest balances are liabilities on your books, not ours. SinoPay never takes custody — the architecture mirrors your existing cage operations.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+  <div class="container">
+    <div class="section-eyebrow" style="justify-content: center;">Founding partners</div>
+    <p class="cta-quote">
+      "We are accepting <span class="gold">three founding-partner casinos</span> for our first deployment wave. Materially better terms, direct access to the founder, and a hand in shaping the product."
+    </p>
+    <p class="cta-sub">Request a private demo. We'll send a one-pager and propose times for a 30-minute conversation.</p>
+    <form class="cta-form" onsubmit="event.preventDefault(); alert('Thank you. We will be in touch within 24 hours.');">
+      <input type="email" placeholder="your.name@casino.com" required>
+      <button type="submit">Request demo</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><span class="logo-mark"></span>Sino<span class="accent">Pay</span></div>
+        <p>Cashless infrastructure for land-based casinos in Georgia, the Caucasus, and the wider region. Built by operators, for operators.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <a href="#platform">Guest app</a>
+        <a href="#platform">Cashier tablet</a>
+        <a href="#platform">Operator dashboard</a>
+        <a href="#compliance">Compliance</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#contact">Request demo</a>
+        <a href="mailto:anton@sinopay.tech">Contact</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 SinoPay. All rights reserved.</span>
+      <span>Tbilisi · Batumi</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
